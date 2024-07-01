@@ -4,6 +4,9 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+
+	"flag"
+	"time"
 )
 
 type quiz struct {
@@ -36,7 +39,12 @@ func parsefile(filepath string) (*[]quiz, error) {
 	return &result, nil
 }
 
-func askQuestions(problems []quiz) int {
+func askQuestions(problems []quiz, timer *time.Timer) int {
+	timerend := false
+	go func() {
+		<-timer.C
+		timerend = true
+	}()
 	score := 0
 	for _, q := range problems {
 		fmt.Println(q.question)
@@ -45,18 +53,27 @@ func askQuestions(problems []quiz) int {
 		if ans == q.answer {
 			score++
 		}
+		if timerend {
+			fmt.Println("timeout")
+			return score
+		}
 	}
 
 	return score
 }
-func main() {
-	// f := flag.String("f", "problems.csv", "input file in csv format")
-	// flag.Parse()
-	answerkey, err := parsefile("problems.csv")
-	fmt.Println(answerkey)
-	fmt.Println(err)
 
-	correctScore := askQuestions(*answerkey)
+func main() {
+	file := flag.String("file", "csvfile", "input file in csv format")
+	timelimit := flag.Int("timelimit", 30, "The time limit of the quiz in seconds")
+	flag.Parse()
+	answerkey, err := parsefile(*file)
+	if err != nil {
+		fmt.Println("error while parsing csv: ", err)
+		return
+	}
+
+	timer := time.NewTimer(time.Second * time.Duration(*timelimit))
+	correctScore := askQuestions(*answerkey, timer)
 
 	fmt.Println("your correct score is: ", correctScore)
 }
