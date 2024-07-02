@@ -1,6 +1,7 @@
 package urlshort
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -32,6 +33,26 @@ func YamlHandler(file string, fallback http.Handler) http.HandlerFunc {
 		panic(err)
 	}
 	err = yaml.Unmarshal(yamlFile, &c)
+	if err != nil {
+
+		fmt.Println("error in marshal")
+		panic(err)
+	}
+	pathToUrl := buildMap(c)
+	fmt.Println(pathToUrl)
+	mapHandler := MapHandler(pathToUrl, fallback)
+
+	return mapHandler
+}
+
+func JsonHandler(file string, fallback http.Handler) http.HandlerFunc {
+	var c []conf
+	jsonFile, err := os.ReadFile(file)
+	if err != nil {
+		fmt.Println("error in reading")
+		panic(err)
+	}
+	err = json.Unmarshal(jsonFile, &c)
 	if err != nil {
 
 		fmt.Println("error in marshal")

@@ -8,7 +8,7 @@ import (
 
 func main() {
 	mux := defaultMux()
-	mapHandler := urlshort.YamlHandler("urls.yaml", mux)
+	mapHandler := urlshort.JsonHandler("urls.json", mux)
 	http.ListenAndServe(":8080", mapHandler)
 }
 
