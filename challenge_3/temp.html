@@ -17,10 +17,10 @@
         #story-arc{
             background-color: lightblue;
         }
-        h1{
+        h1,h2{
             text-align: center;
         }
-        p{
+        p,a{
             text-align: center;
         }
 
@@ -33,11 +33,15 @@
     <div id="main">
         <div id="story">
             <h1>Create your own adventure</h1>
-            <p>main story here...</p>
+            <h2>{{ .Title }}</h2>
+            {{range .Story}}
+                  <p>{{.}}</p>
+            {{end}}
         </div>
         <div id="story-arc">
-            <p>tag1:link...</p>
-            <p>tag2:link...</p>
+            {{range .Options}}
+                <a href="{{ .Arc }}">{{ .Text }}</p>
+            {{end}}
         </div>
     </div>
 </body>
