@@ -18,20 +18,16 @@ type mainPage struct {
 	} `json:"options"`
 }
 
-type Story map[string]mainPage
-
-var Data Story
+var Data map[string]mainPage
 
 func parseStory(jsonFile []byte) {
-	var temp Story
-	err := json.Unmarshal(jsonFile, &temp)
+	err := json.Unmarshal(jsonFile, &Data)
 	if err != nil {
 		fmt.Println("error in unmarshall jsonfile")
 		panic(err)
 	}
-
-	Data = temp
 }
+
 func storyHandler(w http.ResponseWriter, r *http.Request) {
 	var arc string
 	if r.URL.Path == "/" {
